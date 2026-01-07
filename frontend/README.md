@@ -5,7 +5,8 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
 ## Prerequisites
 
 - Node.js 18+ and npm (or yarn/pnpm)
-- The backend API running on `http://localhost:8000` (or configure `NEXT_PUBLIC_API_URL`)
+- The backend API running on `http://localhost:8000` (for local development)
+- For production: Backend API URL configured via `BACKEND_API_URL` environment variable
 
 ## Setup Instructions
 
@@ -15,14 +16,11 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
    npm install
    ```
 
-2. **Configure API URL (optional):**
+2. **Configure Backend API URL (for production):**
 
-   If your backend is running on a different URL, create a `.env.local` file:
-   ```bash
-   NEXT_PUBLIC_API_URL=http://localhost:8000
-   ```
+   For local development, the frontend will automatically use `http://localhost:8000`.
 
-   For production/Vercel deployment, set this as an environment variable in your Vercel project settings.
+   For production/Vercel deployment, you need to set the `BACKEND_API_URL` environment variable in your Vercel project settings to point to your deployed backend API.
 
 3. **Start the development server:**
    ```bash
@@ -45,13 +43,16 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
 ```
 frontend/
 ├── app/                    # Next.js App Router directory
+│   ├── api/               # Next.js API routes (proxies to backend)
+│   │   ├── chat/          # Chat endpoint proxy
+│   │   └── health/        # Health check proxy
 │   ├── layout.tsx         # Root layout component
 │   ├── page.tsx           # Main page component
 │   └── globals.css        # Global styles with Tailwind
 ├── components/            # React components
 │   └── ChatInterface.tsx  # Main chat UI component
 ├── lib/                   # Utility functions
-│   └── api.ts            # API client for backend communication
+│   └── api.ts            # API client (uses Next.js API routes)
 ├── package.json           # Dependencies and scripts
 ├── next.config.js        # Next.js configuration
 ├── tailwind.config.js    # Tailwind CSS configuration
@@ -71,20 +72,49 @@ frontend/
 
 ## Backend Integration
 
-The frontend communicates with the FastAPI backend at `/api/chat` endpoint:
+The frontend uses Next.js API routes (`/app/api/chat` and `/app/api/health`) that proxy requests to the FastAPI backend. This approach:
 
-- **POST** `/api/chat` - Sends a chat message and receives the AI coach's response
-- **GET** `/` - Health check endpoint
+- Avoids CORS issues in production
+- Works seamlessly in both local development and Vercel deployment
+- Keeps API keys and backend URLs server-side
+
+The Next.js API routes communicate with the FastAPI backend:
+- **POST** `/api/chat` (Next.js route) → proxies to backend `/api/chat`
+- **GET** `/api/health` (Next.js route) → proxies to backend `/`
 
 Make sure your backend is running before starting the frontend!
 
-## Deployment
+## Deployment to Vercel
 
-This frontend is configured to work with Vercel. To deploy:
+### Important: Deploy from the Frontend Directory
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Set the `NEXT_PUBLIC_API_URL` environment variable to your backend API URL
-4. Deploy!
+To deploy the frontend to Vercel:
 
-The frontend will automatically proxy API requests to your backend using the configured URL.
+1. **Deploy from the `frontend` directory:**
+   ```bash
+   cd frontend
+   vercel
+   ```
+
+   Or connect your GitHub repo in Vercel and set the **Root Directory** to `frontend` in project settings.
+
+2. **Set Environment Variables in Vercel:**
+
+   Go to your Vercel project settings → Environment Variables and add:
+   - `BACKEND_API_URL` - The URL of your deployed backend API (e.g., `https://your-backend.vercel.app` or your backend's URL)
+
+   **Note:** If your backend is deployed separately on Vercel, you'll need its deployment URL. If it's on the same Vercel project, you may need to deploy it as a separate service or use serverless functions.
+
+3. **Redeploy:**
+
+   After setting environment variables, trigger a new deployment.
+
+### Alternative: Deploy Backend as Serverless Functions
+
+If you want everything in one Vercel deployment, you can deploy the FastAPI backend as serverless functions. However, the current setup assumes the backend is deployed separately.
+
+### Troubleshooting
+
+- **500 Error on Vercel:** Make sure you've set the `BACKEND_API_URL` environment variable
+- **CORS Errors:** The Next.js API routes should handle this automatically
+- **Backend Not Found:** Verify your `BACKEND_API_URL` is correct and the backend is deployed and accessible
