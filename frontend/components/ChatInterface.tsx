@@ -100,16 +100,14 @@ export default function ChatInterface() {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
             >
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                  message.role === 'user'
+                className={`max-w-[80%] rounded-lg px-4 py-3 ${message.role === 'user'
                     ? 'bg-primary-600 text-white'
                     : 'bg-white text-gray-800 border border-gray-200 shadow-sm'
-                }`}
+                  }`}
               >
                 <p className="whitespace-pre-wrap break-words">
                   {message.content}
@@ -165,7 +163,7 @@ export default function ChatInterface() {
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-2 text-center">
-            Powered by GPT-4o-mini
+            Powered by GPT-5
           </p>
         </div>
       </div>
