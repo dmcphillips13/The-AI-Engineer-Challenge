@@ -22,7 +22,8 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 class ChatRequest(BaseModel):
     message: str
 
-@app.get("/")
+@app.get("/api")
+@app.get("/api/")
 def root():
     return {"status": "ok"}
 
