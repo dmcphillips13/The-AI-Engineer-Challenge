@@ -165,7 +165,7 @@ export default function ChatInterface() {
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-2 text-center">
-            Make sure your backend API is running on http://localhost:8000
+            Powered by GPT-4o-mini
           </p>
         </div>
       </div>
