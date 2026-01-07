@@ -16,12 +16,12 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
    ```
 
 2. **Configure API URL (optional):**
-   
+
    If your backend is running on a different URL, create a `.env.local` file:
    ```bash
    NEXT_PUBLIC_API_URL=http://localhost:8000
    ```
-   
+
    For production/Vercel deployment, set this as an environment variable in your Vercel project settings.
 
 3. **Start the development server:**
@@ -30,7 +30,7 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
    ```
 
 4. **Open your browser:**
-   
+
    Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## Available Scripts

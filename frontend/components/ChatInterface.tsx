@@ -52,7 +52,7 @@ export default function ChatInterface() {
     try {
       // Send message to API
       const reply = await sendChatMessage(userMessage);
-      
+
       // Add assistant response to chat
       const assistantMessage: Message = { role: 'assistant', content: reply };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -62,7 +62,7 @@ export default function ChatInterface() {
           ? err.message
           : 'Failed to get response. Please try again.';
       setError(errorMessage);
-      
+
       // Add error message to chat
       const errorMsg: Message = {
         role: 'assistant',
@@ -117,7 +117,7 @@ export default function ChatInterface() {
               </div>
             </div>
           ))}
-          
+
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex justify-start">
@@ -130,7 +130,7 @@ export default function ChatInterface() {
               </div>
             </div>
           )}
-          
+
           {/* Scroll anchor */}
           <div ref={messagesEndRef} />
         </div>
