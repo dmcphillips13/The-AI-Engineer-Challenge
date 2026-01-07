@@ -5,8 +5,7 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
 ## Prerequisites
 
 - Node.js 18+ and npm (or yarn/pnpm)
-- The backend API running on `http://localhost:8000` (for local development)
-- For production: Backend API URL configured via `BACKEND_API_URL` environment variable
+- OpenAI API key (set as `OPENAI_API_KEY` environment variable)
 
 ## Setup Instructions
 
@@ -16,11 +15,14 @@ A modern Next.js frontend for the Mental Coach AI application, featuring a clean
    npm install
    ```
 
-2. **Configure Backend API URL (for production):**
+2. **Set OpenAI API Key:**
 
-   For local development, the frontend will automatically use `http://localhost:8000`.
-
-   For production/Vercel deployment, you need to set the `BACKEND_API_URL` environment variable in your Vercel project settings to point to your deployed backend API.
+   Create a `.env.local` file in the frontend directory:
+   ```bash
+   OPENAI_API_KEY=sk-your-key-here
+   ```
+   
+   For production/Vercel deployment, set `OPENAI_API_KEY` as an environment variable in your Vercel project settings.
 
 3. **Start the development server:**
    ```bash
@@ -70,51 +72,51 @@ frontend/
 - **Blue Color Scheme**: Consistent blue theme throughout the UI
 - **Responsive Design**: Works on desktop and mobile devices
 
-## Backend Integration
+## Architecture
 
-The frontend uses Next.js API routes (`/app/api/chat` and `/app/api/health`) that proxy requests to the FastAPI backend. This approach:
+This is a **unified Next.js application** that includes both frontend and backend functionality:
 
-- Avoids CORS issues in production
-- Works seamlessly in both local development and Vercel deployment
-- Keeps API keys and backend URLs server-side
+- **Frontend**: React components with Next.js App Router
+- **Backend**: Next.js API routes that directly call OpenAI
+- **Single Deployment**: Everything deploys as one app on Vercel
 
-The Next.js API routes communicate with the FastAPI backend:
-- **POST** `/api/chat` (Next.js route) → proxies to backend `/api/chat`
-- **GET** `/api/health` (Next.js route) → proxies to backend `/`
+The Next.js API routes handle all backend logic:
+- **POST** `/api/chat` - Handles chat requests and calls OpenAI directly
+- **GET** `/api/health` - Health check endpoint
 
-Make sure your backend is running before starting the frontend!
+No separate backend server needed! Everything runs in one Next.js application.
 
 ## Deployment to Vercel
 
-### Important: Deploy from the Frontend Directory
+### Deploy Everything as One App
 
-To deploy the frontend to Vercel:
+This application deploys as a **single unified app** - no separate backend needed!
 
 1. **Deploy from the `frontend` directory:**
    ```bash
    cd frontend
    vercel
    ```
-
+   
    Or connect your GitHub repo in Vercel and set the **Root Directory** to `frontend` in project settings.
 
-2. **Set Environment Variables in Vercel:**
-
+2. **Set Environment Variable in Vercel:**
+   
    Go to your Vercel project settings → Environment Variables and add:
-   - `BACKEND_API_URL` - The URL of your deployed backend API (e.g., `https://your-backend.vercel.app` or your backend's URL)
+   - `OPENAI_API_KEY` - Your OpenAI API key (e.g., `sk-...`)
+   
+   Make sure to add it for **Production**, **Preview**, and **Development** environments.
 
-   **Note:** If your backend is deployed separately on Vercel, you'll need its deployment URL. If it's on the same Vercel project, you may need to deploy it as a separate service or use serverless functions.
-
-3. **Redeploy:**
-
-   After setting environment variables, trigger a new deployment.
-
-### Alternative: Deploy Backend as Serverless Functions
-
-If you want everything in one Vercel deployment, you can deploy the FastAPI backend as serverless functions. However, the current setup assumes the backend is deployed separately.
+3. **Deploy:**
+   
+   ```bash
+   vercel --prod
+   ```
+   
+   Or trigger a new deployment from the Vercel dashboard.
 
 ### Troubleshooting
 
-- **500 Error on Vercel:** Make sure you've set the `BACKEND_API_URL` environment variable
-- **CORS Errors:** The Next.js API routes should handle this automatically
-- **Backend Not Found:** Verify your `BACKEND_API_URL` is correct and the backend is deployed and accessible
+- **500 Error on Vercel:** Make sure you've set the `OPENAI_API_KEY` environment variable
+- **"OPENAI_API_KEY not configured" error:** Verify the environment variable is set correctly in Vercel
+- **Build errors:** Make sure you're deploying from the `frontend` directory and that all dependencies are installed
